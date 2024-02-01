@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { User } = require('../../models');
+const { ObjectId } = require('mongodb');
 
 // read all users from db
 router.get('/', async (req, res) => {
@@ -35,22 +36,32 @@ router.post('/', async (req, res) => {
 // create new user
 router.put('/', async (req, res) => {
   try {
-    res.status(201).json(`UPDATE USER`);
+    const userId = new ObjectId(req.params.id);
+    const result = await User.deleteOne({ _id: userId});
+    if (result.deletedCount > 0) {
+      res.status(200).json({ message: 'Document deleted' });
+    } else {
+      res.status(404).json({ message: 'No document found' });
+    }
   } catch (err) {
-    res.status(400).json(err);
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // read all users from db
 router.delete('/:id', async (req, res) => {
   try {
-    
-    
-    
-    
-   
+    const userId = new ObjectId(req.params.id);
+    const result = await User.deleteOne({ _id: userId});
+    if (result.deletedCount > 0) {
+      res.status(200).json({ message: 'Document deleted' });
+    } else {
+      res.status(404).json({ message: 'No document found' });
+    }
   } catch (err) {
-    res.status(400).json(err);
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
