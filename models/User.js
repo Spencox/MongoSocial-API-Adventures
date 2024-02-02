@@ -13,7 +13,12 @@ const userSchema = new Schema(
       type: String,
       unique: true,
       required: true,
-      // INSERT EMAIL VALIDATION
+      validate: {
+        validator: function (value) {
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        },
+        message: 'Invalid email address format',
+      }
     },
     thoughts: [
       {

@@ -6,6 +6,9 @@ const { ObjectId } = require('mongodb');
 router.get('/', async (req, res) => {
   try {
     const users = await User.find();
+    if (!users) {
+      return res.status(404).json({ message: 'No users found' });
+    }
     res.json(users);
   } catch (err) {
     console.error(err);
@@ -16,7 +19,13 @@ router.get('/', async (req, res) => {
 // read all users from db
 router.get('/:id', async (req, res) => {
   try {
-    res.status(200).json(`GET USER ID: ${req.params.id}`);
+    const user = await User.findOne({ _id: req.params.id});
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    res.status(200).json(user);
   } catch (err) {
     res.status(400).json(err);
   }
@@ -34,14 +43,32 @@ router.post('/', async (req, res) => {
 });
 
 // create new user
-router.put('/', async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
-    const userId = new ObjectId(req.params.id);
-    const result = await User.deleteOne({ _id: userId});
-    if (result.deletedCount > 0) {
-      res.status(200).json({ message: 'Document deleted' });
+    const user = new ObjectId(req.params.id);
+    const updateUsername = req.body.username;
+    const updateEmail = req.body.email;
+
+    // Check if the user exists
+    const existingUser = await User.findById(user);
+
+    if (existingUser) {
+      // Update the username if a new value is provided
+      if (updateUsername !== undefined) {
+        existingUser.username = updateUsername;
+      }
+
+      // Update the email if a new value is provided
+      if (updateEmail !== undefined) {
+        existingUser.email = updateEmail;
+      }
+
+      // Save the updated user
+      await existingUser.save();
+
+      res.status(200).json({ message: 'User updated successfully' });
     } else {
-      res.status(404).json({ message: 'No document found' });
+      res.status(404).json({ message: 'User not found' });
     }
   } catch (err) {
     console.error(err);
