@@ -1,5 +1,10 @@
 const { Schema, model, ObjectId } = require('mongoose');
 
+const transform = (doc, ret) => {
+  ret.createdAt = dayjs(ret.createdAt).format('MMM D, YYYY [at] h:mm A');
+  return ret;
+};
+
 // Schema to create User model
 const reactionSchema = new Schema(
   {
@@ -19,6 +24,11 @@ const reactionSchema = new Schema(
         type: Date,
         default: Date.now,
       },
+  },
+  {
+    toJSON: {
+      transform 
+    },
   }
 );
 
