@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { User, Thought } = require('../../models');
+const { User, Thought, Reaction } = require('../../models');
 const { ObjectId } = require('mongodb');
 
 // get all thoughts
@@ -78,15 +78,41 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// read all users from db
+
+// add reaction to thought 
+router.post('/:thoughtId/reactions', async (req, res) => {
+  try {
+    console.log(req.body)
+    const thought = await Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId},
+      {$addToSet: {reactions: req.body
+      }},
+      {new: true}
+      );
+    
+    if (!thought) {
+      return res.status(404).json({ message: 'Thought not found' });
+    }
+    res.status(201).json(`Reaction successfully added`);
+  } catch (err) {
+    res.status(400).json(err);
+  }
+});
+
+// delete thought by id
 router.delete('/:id', async (req, res) => {
   try {
-    const userId = new ObjectId(req.params.id);
-    const result = await User.deleteOne({ _id: userId});
+    const thoughtId = new ObjectId(req.params.id);
+    const result = await Thought.deleteOne({ _id: thoughtId});
+    const user = await User.findOneAndUpdate(
+      { thoughts: thoughtId },
+      { $pull: { thoughts: thoughtId } },
+      { new: true }
+    );
     if (result.deletedCount > 0) {
-      res.status(200).json({ message: 'Document deleted' });
+      res.status(200).json({ message: 'Thought deleted' });
     } else {
-      res.status(404).json({ message: 'No document found' });
+      res.status(404).json({ message: 'No thought found' });
     }
   } catch (err) {
     console.error(err);

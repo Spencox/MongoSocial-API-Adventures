@@ -1,4 +1,5 @@
-const { Schema, model, ObjectId } = require('mongoose');
+const { Schema, model, ObjectId, Types } = require('mongoose');
+const dayjs = require('dayjs');
 
 const transform = (doc, ret) => {
   ret.createdAt = dayjs(ret.createdAt).format('MMM D, YYYY [at] h:mm A');
@@ -9,7 +10,8 @@ const transform = (doc, ret) => {
 const reactionSchema = new Schema(
   {
     reactionId: {
-      type: ObjectId,
+      type: Schema.Types.ObjectId,
+      default: () => new Types.ObjectId(),
     },
     reactionBody: {
         type: String,
@@ -32,7 +34,4 @@ const reactionSchema = new Schema(
   }
 );
 
-// Initialize our User model
-const Reaction = model('reaction', reactionSchema);
-
-module.exports = Reaction;
+module.exports = reactionSchema;

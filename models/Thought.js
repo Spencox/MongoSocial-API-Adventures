@@ -1,4 +1,5 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model, Types } = require('mongoose');
+const Reaction = require('../models/Reaction');
 const dayjs = require('dayjs');
 
 // Define a transform function to format createdAt field
@@ -20,12 +21,7 @@ const thoughtSchema = new Schema(
       type: Date,
       default: Date.now,
     },
-    reactions: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'reactions',
-      }
-    ],
+    reactions: [Reaction],
   },
   {
     toJSON: {
