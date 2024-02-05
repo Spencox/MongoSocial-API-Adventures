@@ -82,7 +82,6 @@ router.put('/:id', async (req, res) => {
 // add reaction to thought 
 router.post('/:thoughtId/reactions', async (req, res) => {
   try {
-    console.log(req.body)
     const thought = await Thought.findOneAndUpdate(
       { _id: req.params.thoughtId},
       {$addToSet: {reactions: req.body
@@ -99,6 +98,33 @@ router.post('/:thoughtId/reactions', async (req, res) => {
   }
 });
 
+// delete reaction from thought 
+router.delete('/:thoughtId/reactions/:reactionId', async (req, res) => {
+  try {
+    const thoughtId = req.params.thoughtId;
+    const reactionId = req.params.reactionId;
+
+    // Find the thought by its ID and remove the reaction with the given reactionId
+    const thought = await Thought.findByIdAndUpdate(
+      thoughtId,
+      { $pull: { reactions: { _id: reactionId } } },
+      { new: true }
+    );
+
+    if (!thought) {
+      return res.status(404).json({ message: 'Thought not found' });
+    }
+
+    res.status(200).json({ message: 'Reaction deleted' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
 // delete thought by id
 router.delete('/:id', async (req, res) => {
   try {
@@ -107,7 +133,6 @@ router.delete('/:id', async (req, res) => {
     const user = await User.findOneAndUpdate(
       { thoughts: thoughtId },
       { $pull: { thoughts: thoughtId } },
-      { new: true }
     );
     if (result.deletedCount > 0) {
       res.status(200).json({ message: 'Thought deleted' });
