@@ -88,7 +88,7 @@ router.post('/:thoughtId/reactions', async (req, res) => {
       }},
       {new: true}
       );
-    
+
     if (!thought) {
       return res.status(404).json({ message: 'Thought not found' });
     }
@@ -121,9 +121,6 @@ router.delete('/:thoughtId/reactions/:reactionId', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
-
 
 // delete thought by id
 router.delete('/:id', async (req, res) => {

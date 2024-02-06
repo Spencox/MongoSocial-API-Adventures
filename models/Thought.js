@@ -8,7 +8,7 @@ const transform = (doc, ret) => {
   return ret;
 };
 
-// Schema to create User model
+// Schema to create thought
 const thoughtSchema = new Schema(
   {
     thoughtText: {
@@ -40,7 +40,7 @@ thoughtSchema
     return this.reactions.length;
   });
 
-// Initialize our User model
+// Initialize our thought model
 const Thought = model('thought', thoughtSchema);
 
 module.exports = Thought;

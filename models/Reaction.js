@@ -6,7 +6,7 @@ const transform = (doc, ret) => {
   return ret;
 };
 
-// Schema to create User model
+// Schema to create reaction 
 const reactionSchema = new Schema(
   {
     reactionId: {

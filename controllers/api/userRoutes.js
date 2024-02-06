@@ -21,7 +21,6 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.params.id})
-    .select('__v')
     .populate('thoughts')
     .populate('friends')
     
@@ -125,9 +124,9 @@ router.delete('/:id', async (req, res) => {
     const userId = new ObjectId(req.params.id);
     const result = await User.deleteOne({ _id: userId});
     if (result.deletedCount > 0) {
-      res.status(200).json({ message: 'Document deleted' });
+      res.status(200).json({ message: 'User deleted' });
     } else {
-      res.status(404).json({ message: 'No document found' });
+      res.status(404).json({ message: 'No user found' });
     }
   } catch (err) {
     console.error(err);
